@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Rental</title>
+<style>
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+    <h1>Car Rental</h1>
+    <label for="pickupDate">Pickup Date:</label>
+    <input type="date" id="pickupDate"><br>
+
+    <label for="numberOfDays">Number of Days:</label>
+    <input type="number" id="numberOfDays"><br>
+
+    <label><input type="checkbox" id="electronicToll"> Electronic Toll ($5/day)</label>
+    <label><input type="checkbox" id="gps"> GPS ($10/day)</label>
+    <label><input type="checkbox" id="roadsideAssistance"> Roadside Assistance ($15/day)</label><br>
+
+    <label for="under25">Are you under 25?</label>
+    <label><input type="radio" name="under25" value="yes"> Yes</label>
+    <label><input type="radio" name="under25" value="no" checked> No</label><br>
+
+    <button id="calculateButton">Calculate Total</button><br>
+
+    <div id="breakdown" style="display: none;">
+        <h2>Breakdown of Estimated Costs</h2>
+        <ul id="breakdownList">
+        </ul>
+    </div>
+
+    <p id="totalCost"></p>
+
+    <script>
+        window.onload = function() {
+            document.getElementById("calculateButton").addEventListener("click", function() {
+                // Get input values
+                const pickupDate = document.getElementById("pickupDate").value;
+                const numberOfDays = parseInt(document.getElementById("numberOfDays").value);
+                const electronicToll = document.getElementById("electronicToll").checked;
+                const gps = document.getElementById("gps").checked;
+                const roadsideAssistance = document.getElementById("roadsideAssistance").checked;
+                const under25 = document.querySelector('input[name="under25"]:checked').value;
+
+                // Calculate basic rental cost
+                let basicCost = 29.99 * numberOfDays;
+
+                // Calculate options cost
+                let optionsCost = 0;
+                let breakdownHTML = "";
+                if (electronicToll) {
+                    optionsCost += 5 * numberOfDays;
+                    breakdownHTML += "<li>Electronic Toll: $" + (5 * numberOfDays).toFixed(2) + "</li>";
+                }
+                if (gps) {
+                    optionsCost += 10 * numberOfDays;
+                    breakdownHTML += "<li>GPS: $" + (10 * numberOfDays).toFixed(2) + "</li>";
+                }
+                if (roadsideAssistance) {
+                    optionsCost += 15 * numberOfDays;
+                    breakdownHTML += "<li>Roadside Assistance: $" + (15 * numberOfDays).toFixed(2) + "</li>";
+                }
+
+                // Apply surcharge for drivers under 25
+                if (under25 === "yes") {
+                    basicCost *= 1.3;
+                    breakdownHTML += "<li>Under 25 Surcharge: $" + (basicCost - 29.99 * numberOfDays).toFixed(2) + "</li>";
+                }
+
+                // Calculate total cost
+                let totalCost = basicCost + optionsCost;
+
+                // Display breakdown of estimated costs
+                document.getElementById("breakdownList").innerHTML = breakdownHTML;
+                document.getElementById("breakdown").style.display = "block";
+
+                // Display total cost
+                document.getElementById("totalCost").textContent = "Estimated Total Cost: $" + totalCost.toFixed(2);
+            });
+        };
+    </script>
+</body>
+</html>
